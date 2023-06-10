@@ -1,0 +1,17 @@
+.notification-container {
+    top: 5vh;
+    right: min(10%, 5vw);
+    position: absolute;
+    display: block;
+    max-height: 90vh;
+    width: min(90vw, 700px) !important;
+    background-color: transparent;
+    overflow: hidden;
+    padding: 10px;
+}
+
+.router-outlet {
+    height: 100vh;
+    width: 100vw;
+    overflow: auto;
+}

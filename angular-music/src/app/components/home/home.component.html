@@ -1,0 +1,24 @@
+<div class="main-container">
+    <div class="player-title-container">
+        <span class="player-title">My Music</span>
+    </div>
+
+    <div class="content-container">
+        <div class="nav-container">
+            <button class="nav-button" (click)="tabChange(1)" [style]="currentTab == 1 ? 'border-bottom: 2px solid white' :''">Player</button>
+            <button class="nav-button" (click)="tabChange(2)" [style]="currentTab == 2 ? 'border-bottom: 2px solid white' :''">Playlists</button>
+        </div>
+
+        <div class="content-container-inside" id="parentContainer">
+            <div class="content-sub-container" id="player">
+                <div class="music-player-container">
+                    <app-player></app-player>
+                </div>
+            </div>
+            <div class="content-sub-container" id="listing">
+                <app-listing></app-listing>
+            </div>
+        </div>
+
+    </div>
+</div>

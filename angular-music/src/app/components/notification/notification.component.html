@@ -1,0 +1,23 @@
+<div *ngIf="notification && notification.title" class="notification-container" [@enterAnimation]
+    [style.background]="notification.type == 1 ? 'darkblue' : notification.type == 2? 'goldenrod' : notification.type == 3? 'red' : 'blue'">
+    <div class="notification-header">
+
+        <div class="notification-title-container">
+            <span class="notification-title">
+                {{notification.title}}
+            </span>
+        </div>
+
+        <div>
+            <svg xmlns="http://www.w3.org/2000/svg" (click)="closeNotification()" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                class="notification-controller">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </div>
+
+    </div>
+
+    <div *ngIf="notification.body" class="notification-body">
+        {{notification.body}}
+    </div>
+</div>
