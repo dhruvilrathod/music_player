@@ -1,17 +1,18 @@
 <div class="player-container">
+    
     <div class="music-logo-container">
-        <img src="assets/music_placeholder.webp" alt="Music Logo">
+        <img alt="Music Logo" (error)="imageError($event)" #musicLogo>
     </div>
 
-    <div class="music-title" [title]="'Imagine Daragons - Beliver'">
-        Imagine Daragons - Beliverssssssssssssssssssssssssssssssssssss
-    </div>
-
+    
     <audio id="audio" #audio (loadeddata)="playerRegister($event)">
-        <source src="assets/1.flac" type="audio/flac">
+        <source [src]="fileSrc" type="audio/flac">
     </audio>
-
-    <div class="player-controls-container" *ngIf="player">
+    
+    <div class="player-controls-container" *ngIf="player && this.isLoading == false">
+        <div class="music-title" [title]="song.tags.title ?? fileName + ' ' + song.tags.artist ?? ''">
+            {{(song.tags.title ?? fileName) + ' - ' + (song.tags.artist ?? '')}}
+        </div>
         <div class="normal-flex-between">
             <span>{{currentTime | date: 'mm:ss'}}</span>
             <span>{{(player.duration * 1000 -1800000) | date: 'mm:ss'}}</span>

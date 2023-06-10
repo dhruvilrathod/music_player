@@ -10,7 +10,7 @@ export class HomeComponent implements OnInit {
   public currentTab: number = 1;
 
   ngOnInit(): void {
-    this.tabChange(2);
+    // this.tabChange(2);
   }
 
   public tabChange(tabIndex: number): void {

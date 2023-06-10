@@ -8,3 +8,24 @@ notification id:
 1 = info
 2 = warning
 3 = error
+
+
+
+
+
+temp:
+
+{
+    "type": "FLAC",
+    "version": "1",
+    "tags": {
+        "title": "Let Me Down Slowly",
+        "artist": "Alec Benjamin",
+        "album": "Let Me Down Slowly",
+        "picture": {
+            "format": "image/jpeg",
+            "type": "Cover (front)",
+            "description": "",
+        }
+    }
+}
