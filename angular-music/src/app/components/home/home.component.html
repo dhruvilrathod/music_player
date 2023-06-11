@@ -12,7 +12,7 @@
         <div class="content-container-inside" id="parentContainer">
             <div class="content-sub-container" id="player">
                 <div class="music-player-container">
-                    <app-player class="music-player"></app-player>
+                    <app-player class="music-player" [isPlayerOnScreen]="currentTab === 1 ? true: false"></app-player>
                 </div>
             </div>
             <div class="content-sub-container" id="listing">

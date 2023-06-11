@@ -13,6 +13,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     @Input() fileSrc: string = 'assets/1.flac';
     @Input() fileName: string = '1.flac';
     @Input() fileType: string = 'audio/flac';
+    @Input() isPlayerOnScreen!: boolean;
 
 
     // @Input() fileSrc:string = 'assets/2.mp3';
@@ -39,7 +40,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit(): void {
         window.addEventListener("keydown", (e) => {
-            if (e.code == "Space") {
+            if (this.isPlayerOnScreen === true && e.code === "Space") {
                 this.isPlaying = !this.isPlaying;
                 this.toggleAudio(this.isPlaying);
             }
