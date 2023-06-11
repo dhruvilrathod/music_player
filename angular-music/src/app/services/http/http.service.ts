@@ -1,18 +1,47 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Endpoints } from 'src/app/enums';
+import { Endpoints, QueryParams } from 'src/app/enums';
+import { ResponseMessage } from 'src/app/interfaces';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class HttpService {
 
-  constructor(
-    private _http: HttpClient
-  ) { }
+    constructor(
+        private _http: HttpClient
+    ) { }
 
-  public getStatus(): Observable<string> {
-    return this._http.get<string>(Endpoints.server_status);
-  }
+    public getStatus(): Observable<string> {
+        return this._http.get<string>(Endpoints.FILE_SERVER_STATUS);
+    }
+
+    public getAllPlaylists(): Observable<string[]> {
+        return this._http.get<string[]>(Endpoints.GET_ALL_PLAYLISTS);
+    }
+
+    public getMusicsOfPlaylist(playlist: string): Observable<string[]> {
+        return this._http.get<string[]>(`${Endpoints.GET_MUSICS_OF_PLAYLIST}?${QueryParams.PLAYLIST_NAME}=${playlist}`);
+    }
+
+    public getMusicFile(playlist: string, musicFile: string): Observable<File> {
+        return this._http.get<File>(`${Endpoints.GET_MUSIC_FILE}?${QueryParams.PLAYLIST_NAME}=${playlist}&${QueryParams.FILE_NAME}=${musicFile}`);
+    }
+
+    public createNewPlaylist(playlist: string): Observable<ResponseMessage> {
+        return this._http.post<ResponseMessage>(`${Endpoints.CREATE_NEW_PLAYLIST}?${QueryParams.PLAYLIST_NAME}=${playlist}`, '');
+    }
+
+    public deletePlaylist(playlist: string): Observable<ResponseMessage> {
+        return this._http.delete<ResponseMessage>(`${Endpoints.CREATE_NEW_PLAYLIST}?${QueryParams.PLAYLIST_NAME}=${playlist}`);
+    }
+
+    public deleteFile(playlist: string, fileNames: string[]) {
+        return this._http.delete(`${Endpoints.CREATE_NEW_PLAYLIST}?${QueryParams.PLAYLIST_NAME}=${playlist}`, { body: {files: fileNames} });
+    }
+
+    public fileUpload(files:FormData, playlist: string): Observable<ResponseMessage> {
+        return this._http.post<ResponseMessage>(`${Endpoints.UPLOAD_FILE_TO_PLAYLIST}?${QueryParams.PLAYLIST_NAME}=${playlist}`, files)
+    }
 }
