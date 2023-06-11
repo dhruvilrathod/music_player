@@ -79,7 +79,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         setInterval(() => {
             this.currentTime = this.player.currentTime * 1000 - 1800000;
             this.sliderValue = Math.floor(this.player.currentTime / this.player.duration * 1000);
-        });
+        },1000);
 
         setInterval(() => {
             if (this.player.duration > 0 && !this.player.paused)
@@ -104,5 +104,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
     public imageError(e:Event): void {
         (e.target as HTMLImageElement).src = "assets/music_placeholder.webp"
+    }
+
+    public changeCurrentTime(e:Event) {
+        this.player.currentTime = (parseInt((e.target as HTMLInputElement).value) * this.player.duration) / 1000;
     }
 }
