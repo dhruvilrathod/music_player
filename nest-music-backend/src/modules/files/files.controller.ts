@@ -48,6 +48,16 @@ export class FilesController {
         return this._fileService.deleteFileFromFolder(req);
     }
 
+    @Post('updatePlaylistName')
+    updatePlaylistName(@Req() req: Request):ResponseMessage {
+        return this._fileService.updatePlaylistName(req);
+    }
+
+    @Post('updateFileName')
+    updateFileName(@Req() req: Request): ResponseMessage {
+        return this._fileService.updateFileName(req);
+    }
+
     @Post('upload')
     @UseInterceptors(FilesInterceptor('files', undefined, {
         storage: storageConfig,

@@ -4,4 +4,6 @@ export interface ResponseMessage {
     cacheFile?:string,
     notificationType?: number,
     body?:string
+    error?: string,
+    statusCode?: number
 }

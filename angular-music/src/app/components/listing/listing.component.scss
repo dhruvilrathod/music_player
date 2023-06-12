@@ -51,6 +51,12 @@
     border-radius: 5px;
 }
 
+.general-button:disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.6
+}
+
 .general-button:hover {
     background-color: aliceblue;
     color: black;
@@ -82,7 +88,7 @@
 .listing-record-controls-container {
     display: flex;
     right: 0;
-    width: 80px;
+    width: 100px;
     gap: 4px;
     & div {
         height: 20px;
@@ -99,4 +105,17 @@
     & div:hover {
         background-color: rgba(139, 139, 139, 0.7);
     }
+}
+
+.no-data {
+    padding: 20px 0;
+    text-align: center;
+    img {
+        width: 200px;
+    }
+}
+
+.record-selected {
+    background-color: white;
+    color: black;
 }

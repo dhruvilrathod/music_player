@@ -9,5 +9,7 @@ export enum Endpoints {
     GET_MUSIC_FILE = 'files',
     GET_PLAYER_HISTORY = 'player/history',
     ADD_UPDATE_CACHE = 'player/addToCache',
-    CLEAR_CACHE = 'player/clearCache'
+    CLEAR_CACHE = 'player/clearCache',
+    UPDATE_PLAYLIST_NAME ='files/updatePlaylistName',
+    UPDATE_MUSIC_NAME ='files/updateFileName'
 }

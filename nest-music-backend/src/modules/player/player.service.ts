@@ -25,7 +25,7 @@ export class PlayerService {
                 let cacheFile = JSON.parse(fs.readFileSync(`${enviornment.cache_dir}/${cacheFileName}`, { encoding: 'utf8' }));
                 return cacheFile;
             } catch (err) {
-                throw new InternalServerErrorException(new Error(), "Something went wrong");
+                return {};
             }
         }
     }

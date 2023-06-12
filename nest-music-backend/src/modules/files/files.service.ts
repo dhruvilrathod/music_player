@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { enviornment } from 'src/enviornment/enviornment';
 import * as fs from 'fs';
@@ -19,7 +19,8 @@ export class FilesService {
             throw new ConflictException("Playlist already exists", { cause: new Error(), description: "The playlist you are trying to create already exists." });
         else fs.mkdirSync(`${enviornment.upload_dir}/${req.query.playlist}`);
         const response: ResponseMessage = {
-            message: "Playlist created successfully"
+            message: "Playlist created successfully",
+            body: "The Playlist has been created"
         };
         return response;
     }
@@ -31,7 +32,8 @@ export class FilesService {
                     fs.rmSync(`${enviornment.upload_dir}/${p}`, { recursive: true, force: true });
             });
             const response: ResponseMessage = {
-                message: "Playlist deleted successfully"
+                message: "Playlist deleted successfully",
+                body: "The Playlist has been deleted"
             };
             return response;
         } catch (error) {
@@ -46,7 +48,8 @@ export class FilesService {
                     fs.rmSync(`${enviornment.upload_dir}/${req.body.playlist}/${f}`, { force: true });
             });
             const response: ResponseMessage = {
-                message: "Music deleted successfully"
+                message: "Music deleted successfully",
+                body: "The music has been deleted"
             };
             return response;
         } catch (error) {
@@ -77,12 +80,43 @@ export class FilesService {
                     throw new BadRequestException("File not received", { cause: new Error(), description: "The file is not received by the Player" });
             })
             const response: ResponseMessage = {
-                message: "Files received successfully"
+                message: "Files received successfully",
+                body: "Music files has been added"
             };
 
             return response;
         } catch (error) {
             throw new ServiceUnavailableException("Something went wrong", { cause: new Error(), description: error });
+        }
+    }
+
+    updatePlaylistName(req: Request): ResponseMessage {
+        if (!fs.existsSync(`${enviornment.upload_dir}/${req.query.playlist}`))
+            throw new NotFoundException("Playlist not found", { cause: new Error(), description: "The playlist is not availabe" });
+        try {
+            fs.renameSync(`${enviornment.upload_dir}/${req.query.playlist}`, `${enviornment.upload_dir}/${req.query.updatedPlaylistName}`);
+            const response: ResponseMessage = {
+                message: "Playlist Name Updated",
+                body: "Playlist name updated successfully"
+            };
+            return response;
+        } catch (err) {
+            throw new InternalServerErrorException("Something went wrong", { cause: new Error(), description: "The playlist is not availabe" });
+        }
+    }
+
+    updateFileName(req: Request): ResponseMessage {
+        if (!fs.existsSync(`${enviornment.upload_dir}/${req.query.playlist}/${req.query.fileName}`))
+            throw new NotFoundException("Playlist not found", { cause: new Error(), description: "The playlist is not availabe" });
+        try {
+            fs.renameSync(`${enviornment.upload_dir}/${req.query.playlist}/${req.query.fileName}`, `${enviornment.upload_dir}/${req.query.playlist}/${req.query.updatedFileName}`);
+            const response: ResponseMessage = {
+                message: "Music Name Updated",
+                body: "Music name updated successfully"
+            };
+            return response;
+        } catch (err) {
+            throw new InternalServerErrorException("Something went wrong", { cause: new Error(), description: "The music is not availabe" });
         }
     }
 
