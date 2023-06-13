@@ -38,7 +38,7 @@ export class HttpService {
     }
 
     public deleteFile(playlist: string, fileNames: string[]) {
-        return this._http.delete(`${Endpoints.CREATE_NEW_PLAYLIST}?${QueryParams.PLAYLIST_NAME}=${playlist}`, { body: {files: fileNames} });
+        return this._http.delete(`${Endpoints.CREATE_NEW_PLAYLIST}?${QueryParams.PLAYLIST_NAME}=${playlist}`, { body: {files: fileNames, playlist: playlist} });
     }
 
     public fileUpload(files:FormData, playlist: string): Observable<ResponseMessage> {

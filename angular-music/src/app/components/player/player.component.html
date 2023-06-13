@@ -1,29 +1,30 @@
 <div class="player-container">
     
     <div class="music-logo-container">
-        <img alt="Music Logo" (error)="imageError($event)" #musicLogo>
+        <img alt="Music Logo" src="assets/music_placeholder.webp" (error)="imageError($event)" #musicLogo>
     </div>
 
+    <div [ariaHidden]="'true'" #audioTagContainer>
+        <!-- <audio id="audio" #audio>
+            <source [src]="tempFileSourceElem" type="audio/*">
+        </audio> -->
+    </div>
     
-    <audio id="audio" #audio (loadeddata)="playerRegister($event)">
-        <source [src]="fileSrc" type="audio/flac">
-    </audio>
-    
-    <div class="player-controls-container" *ngIf="player && this.isLoading == false">
-        <div class="music-title" [title]="song.tags.title ?? fileName + ' ' + song.tags.artist ?? ''">
-            {{(song.tags.title ?? fileName) + ' - ' + (song.tags.artist ?? '')}}
+    <div class="player-controls-container">
+        <div *ngIf="player && this.isLoading == false" class="music-title" [title]="song.tags.title ?? fileName + ' ' + song.tags.artist ?? ''">
+            {{(song.tags.title ?? fileName ?? 'No File Selected') + (song.tags.artist ? ' - ' + song.tags.artist: '')}}
         </div>
-        <div class="normal-flex-between">
+        <div class="normal-flex-between" *ngIf="player && this.isLoading == false">
             <span>{{currentTime | date: 'mm:ss'}}</span>
-            <span>{{(player.duration * 1000 -1800000) | date: 'mm:ss'}}</span>
+            <span>{{(player.duration * 1000 - 1800000) | date: 'mm:ss'}}</span>
         </div>
-        <div class="slider-container">
+        <div class="slider-container" *ngIf="player && this.isLoading == false">
             <input type="range" min="1" max="1000" class="slider" [value]="player.currentTime / player.duration * 1000 | number: '1.0-0'" (change)="changeCurrentTime($event)">
         </div>
 
         <div class="normal-flex-center">
 
-            <div class="palyer-control-container">
+            <div class="palyer-control-container" (click)="player && this.isLoading == false && fileChange(1)" [title]="previousFile" [attr.disabled]="!previousFile || previousFile === ''">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="player-controls">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -34,19 +35,19 @@
 
             <div class="palyer-control-container">
 
-                <svg *ngIf="isPlaying == false" (click)="toggleAudio(true)" xmlns="http://www.w3.org/2000/svg"
+                <svg *ngIf="isPlaying == false" (click)="player && this.isLoading == false && toggleAudio(true)" xmlns="http://www.w3.org/2000/svg"
                     fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="player-controls">
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
                 </svg>
 
-                <svg *ngIf="isPlaying == true" (click)="toggleAudio(false)" xmlns="http://www.w3.org/2000/svg"
+                <svg *ngIf="isPlaying == true" (click)="player && this.isLoading == false && toggleAudio(false)" xmlns="http://www.w3.org/2000/svg"
                     fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="player-controls">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />
                 </svg>
             </div>
 
-            <div class="palyer-control-container">
+            <div class="palyer-control-container" (click)="player && this.isLoading == false && fileChange(2)" [title]="nextFile" [attr.disabled]="!nextFile || nextFile === ''">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="player-controls">
                     <path stroke-linecap="round" stroke-linejoin="round"

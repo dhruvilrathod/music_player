@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CustomNotification, MusicHistory, ResponseMessage } from 'src/app/interfaces';
 import { HttpService } from 'src/app/services/http/http.service';
@@ -17,6 +17,11 @@ export class ListingComponent implements OnInit {
     @Input() currentPlaylist!: string;
     @Input() allPlaylists!: string[];
     @Input() currentSong!: string;
+    @Input() isPlaying!: boolean;
+
+    @Output() newSongToPlay: EventEmitter<string> = new EventEmitter<string>();
+    @Output() toggleSongOutput: EventEmitter<boolean> = new EventEmitter<boolean>();
+    @Output() allSongsInCurrentPlaylistOutput: EventEmitter<[string[], string]> = new EventEmitter<[string[], string]>();
 
     public allSongsInCurrentPlaylist!: string[];
     public isAddigPlaylist: boolean = false;
@@ -36,16 +41,30 @@ export class ListingComponent implements OnInit {
 
         // this.allPlaylists = ['abcd', 'adfasdfsdf'];
         // this.currentPlaylist = this.allPlaylists[0];
+        this.playlistSelected('aaa');
     }
 
     private _getSongsInPlaylist(): void {
-        let tempObservable: Subscription = this._httpService.getMusicsOfPlaylist(this.currentPlaylist).subscribe({
-            next: (songs: string[]) => this.allSongsInCurrentPlaylist = songs,
-            error: (err: HttpErrorResponse) => this._notificationService.showNotification(new CustomNotification(err.error.message ?? 'Something went wrong', true, 3, err.error.body ?? err.error.error ?? '')),
-            complete: () => {
-                tempObservable.unsubscribe();
-            }
-        })
+        if (this.currentPlaylist) {
+            let tempObservable: Subscription = this._httpService.getMusicsOfPlaylist(this.currentPlaylist).subscribe({
+                next: (songs: string[]) => { this.allSongsInCurrentPlaylist = songs; },
+                error: (err: HttpErrorResponse) => {
+                    this._notificationService.showNotification(new CustomNotification(err.error.message ?? 'Something went wrong', true, 3, err.error.body ?? err.error.error ?? ''));
+                    this.allSongsInCurrentPlaylist = [];
+                    this.allSongsInCurrentPlaylistOutput.emit([[], this.currentPlaylist]);
+                },
+                complete: () => {                    
+                    tempObservable.unsubscribe();
+                    console.log(this.allSongsInCurrentPlaylist);
+                    this.allSongsInCurrentPlaylistOutput.emit([this.allSongsInCurrentPlaylist, this.currentPlaylist]);
+                }
+            })
+        }
+    }
+
+    public songSelectedToPlay(s: string) {        
+        this.newSongToPlay.emit(s);
+        this.toggleSongOutput.emit(true);
     }
 
     public filesSelected(e: Event): void {
@@ -59,12 +78,15 @@ export class ListingComponent implements OnInit {
             else formData.append("files", selectedFiles![parseInt(file)]);
         });
         if (error) return this._notificationService.showNotification(new CustomNotification("Invalid File Format", true, 2, "The selected file(s) do(es) not have valid format"));
-        
+
         let tempObservable: Subscription = this._httpService.fileUpload(formData, this.currentPlaylist).subscribe({
             next: (m: ResponseMessage) => this._notificationService.showNotification(new CustomNotification(m.message ?? 'Upload Successful', true, m.code ?? 1, m.body ?? "The selected file(s) uploaded successfully")),
             error: (err: HttpErrorResponse) => this._notificationService.showNotification(new CustomNotification(err.error.message ?? 'Something went wrong', true, 3, err.error.body ?? err.error.error ?? '')),
             complete: () => {
                 tempObservable.unsubscribe();
+                Object.keys((e.target as HTMLInputElement).files!).forEach((file: string) => {
+                    this.allSongsInCurrentPlaylist.push(file);
+                });
             }
         });
     }
@@ -124,6 +146,7 @@ export class ListingComponent implements OnInit {
     public playlistSelected(p: string): void {
         this.currentPlaylist = p;
         console.log('load songs for ', p);
+        this._getSongsInPlaylist();
     }
 
     public deletePlaylist(p: string, i: number): void {
@@ -136,5 +159,21 @@ export class ListingComponent implements OnInit {
                 this.currentPlaylist = this.allPlaylists[0];
             }
         })
+    }
+
+    public deleteSong(s: string, i: number) {
+        let tempObservable: Subscription = this._httpService.deleteFile(this.currentPlaylist, [s]).subscribe({
+            next: (m: ResponseMessage) => this._notificationService.showNotification(new CustomNotification(m.message ?? 'Deleted Successfully', true, m.code ?? 1, m.body ?? '')),
+            error: (err: HttpErrorResponse) => this._notificationService.showNotification(new CustomNotification(err.error.message ?? 'Something went wrong', true, 3, err.error.body ?? err.error.error ?? 'The Playlist has been deleted')),
+            complete: () => {
+                tempObservable.unsubscribe();
+                this.allPlaylists.splice(i, 1);
+                this.currentPlaylist = this.allPlaylists[0];
+            }
+        })
+    }
+
+    toggleSong(status: boolean) {
+        this.toggleSongOutput.emit(status);
     }
 }

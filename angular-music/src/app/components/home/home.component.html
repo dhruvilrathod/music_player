@@ -12,11 +12,11 @@
         <div class="content-container-inside" id="parentContainer">
             <div class="content-sub-container" id="player">
                 <div class="music-player-container">
-                    <app-player class="music-player" [isPlayerOnScreen]="currentTab === 1 ? true: false"></app-player>
+                    <app-player class="music-player" [isPlaying]="isPlaying" (currentPlayingSong)="changeCurrentFiles($event)" [fileName]="currentSong" [nextFile]="nextSong" [previousFile]="previousSong" [playlist]="currentPlaylist" [isPlayerOnScreen]="currentTab === 1 ? true: false"></app-player>
                 </div>
             </div>
             <div class="content-sub-container" id="listing">
-                <app-listing [allPlaylists]="allPlaylists" [currentPlaylist]="currentPlaylist" [currentSong]="currentSong"></app-listing>
+                <app-listing [allPlaylists]="allPlaylists" (allSongsInCurrentPlaylistOutput)="updateSongsListing($event)" (toggleSongOutput)="isPlaying = $event" (newSongToPlay)="changeCurrentFiles(3, $event)" [isPlaying]="isPlaying" [currentPlaylist]="currentPlaylist" [currentSong]="currentSong"></app-listing>
             </div>
         </div>
 

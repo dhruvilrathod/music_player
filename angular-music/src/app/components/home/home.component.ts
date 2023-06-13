@@ -16,11 +16,14 @@ import { NotificationService } from 'src/app/services/notification/notification.
 export class HomeComponent implements OnInit {
 
     public currentTab: number = 1;
-    public currentPlaylist!: string;
+    public currentPlaylist: string = 'aaa';
     public allPlaylists!: string[];
     public currentSong!: string;
+    public nextSong!: string;
+    public previousSong!: string;
     public allSongsInPlaylist!: string[];
     public lastMusicDuration: number | undefined;
+    public isPlaying: boolean = false;
 
     constructor(
         private _notificationService: NotificationService,
@@ -77,15 +80,47 @@ export class HomeComponent implements OnInit {
             error: (err: HttpErrorResponse) => this._notificationService.showNotification(new CustomNotification(err.error.message ?? 'Something went wrong', true, 3, err.error.body ?? err.error.error ?? '')),
             complete: () => {
                 tempObservable.unsubscribe();
+                if (this.currentPlaylist || this.currentSong || this.allSongsInPlaylist)
+                    this.changeCurrentFiles(0);
             }
         })
+    }
+
+    public updateSongsListing(s: [string[], string]): void {
+        this.allSongsInPlaylist = s[0];
+        this.currentPlaylist = s[1];
+    }
+
+    public changeCurrentFiles(type: number, song?: string): void {
+        let currentIndex = this.allSongsInPlaylist ? this.allSongsInPlaylist.indexOf(this.currentSong) : 0;
+        if (type === 0) {
+            this.previousSong = this.allSongsInPlaylist[currentIndex - 1] ?? undefined;
+            this.nextSong = this.allSongsInPlaylist[currentIndex + 1] ?? undefined;
+        }
+        else if (type === 1 && this.allSongsInPlaylist[currentIndex - 1]) {
+            this.previousSong = this.allSongsInPlaylist[currentIndex - 2] ?? undefined
+            this.currentSong = this.allSongsInPlaylist[currentIndex - 1] ?? undefined
+            this.nextSong = this.allSongsInPlaylist[currentIndex] ?? undefined
+        }
+        else if (type === 2 && this.allSongsInPlaylist[currentIndex + 1]) {
+            this.previousSong = this.allSongsInPlaylist[currentIndex] ?? undefined
+            this.currentSong = this.allSongsInPlaylist[currentIndex + 1] ?? undefined
+            this.nextSong = this.allSongsInPlaylist[currentIndex + 2] ?? undefined
+        }
+        else if (type === 3) {
+            currentIndex = this.allSongsInPlaylist.indexOf(song!);
+            this.currentSong = this.allSongsInPlaylist[currentIndex] ?? undefined
+            this.previousSong = this.allSongsInPlaylist[currentIndex - 1] ?? undefined
+            this.nextSong = this.allSongsInPlaylist[currentIndex + 1] ?? undefined
+
+        }
     }
 
     public onResize(e: Event) {
         let resizeSize = document.getElementById('player')?.parentElement?.offsetWidth;
         document.getElementById('player')!.style.width = `${resizeSize}px`;
         document.getElementById('listing')!.style.width = `${resizeSize}px`;
-        if(this.currentTab === 2) {
+        if (this.currentTab === 2) {
             document.getElementById('listing')!.style.transform = `translateX(-${resizeSize}px)`;
             document.getElementById('player')!.style.transform = `translateX(-${resizeSize}px)`;
         }
