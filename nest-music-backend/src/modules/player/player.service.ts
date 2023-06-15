@@ -37,7 +37,7 @@ export class PlayerService {
             throw new InternalServerErrorException("Something went wrong", err);
         }
         const response: ResponseMessage = {
-            code: 2
+            code: 1
         };
         return response;
     }
@@ -49,7 +49,7 @@ export class PlayerService {
             throw new InternalServerErrorException("Something went wrong", err);
         }
         const response: ResponseMessage = {
-            code: 3
+            code: 1
         };
         return response;
     }

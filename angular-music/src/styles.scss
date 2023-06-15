@@ -61,3 +61,34 @@ html body {
     background: #555;
     cursor: pointer;
 }
+
+.general-button {
+    min-height: 30px;
+    background-color: transparent;
+    border: 2px solid white;
+    color: white;
+    cursor: pointer;
+    transition: all 200ms;
+    border-radius: 5px;
+}
+
+.general-button:disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.6
+}
+
+.general-button:hover {
+    background-color: aliceblue;
+    color: black;
+}
+
+.general-button-danger{
+    color: red;
+    border-color: red;
+}
+
+.general-button-danger:hover {
+    background-color: red;
+    color: white;
+}

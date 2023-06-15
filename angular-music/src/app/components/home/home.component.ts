@@ -1,9 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ComponentRef, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { ResponseMessage, CustomNotification, MusicHistory } from 'src/app/interfaces';
+import { CustomNotification, MusicHistory, ResponseMessage } from 'src/app/interfaces';
 import { HttpService } from 'src/app/services/http/http.service';
 import { NotificationService } from 'src/app/services/notification/notification.service';
+import { ListingComponent } from '../listing/listing.component';
 
 @Component({
     selector: 'app-home',
@@ -16,7 +17,8 @@ import { NotificationService } from 'src/app/services/notification/notification.
 export class HomeComponent implements OnInit {
 
     public currentTab: number = 1;
-    public currentPlaylist: string = 'aaa';
+    public currentPlaylistInListing!: string;
+    public currentPlaylistInPlayer!: string;
     public allPlaylists!: string[];
     public currentSong!: string;
     public nextSong!: string;
@@ -24,6 +26,8 @@ export class HomeComponent implements OnInit {
     public allSongsInPlaylist!: string[];
     public lastMusicDuration: number | undefined;
     public isPlaying: boolean = false;
+    public fromHistroy: boolean = false;
+    public emptyPlayer: boolean = false;
 
     constructor(
         private _notificationService: NotificationService,
@@ -40,13 +44,11 @@ export class HomeComponent implements OnInit {
         let scrollWidth = document.getElementById('player')?.parentElement?.offsetWidth;
         switch (tabIndex) {
             case 1:
-                console.log("switch to tab 1");
                 document.getElementById('listing')!.style.transform = `translateX(0px)`;
                 document.getElementById('player')!.style.transform = `translateX(0px)`;
                 this.currentTab = 1;
                 break;
             case 2:
-                console.log("switch to tab 2");
                 document.getElementById('listing')!.style.transform = `translateX(-${scrollWidth}px)`;
                 document.getElementById('player')!.style.transform = `translateX(-${scrollWidth}px)`;
                 this.currentTab = 2;
@@ -60,7 +62,7 @@ export class HomeComponent implements OnInit {
         let tempObservable: Subscription = this._httpService.getAllPlaylists().subscribe({
             next: (playlists: string[]) => this.allPlaylists = playlists,
             error: (err: HttpErrorResponse) => {
-                this._notificationService.showNotification(new CustomNotification(err.error.message ?? 'Something went wrong', true, 3, err.error.body ?? err.error.error ?? '')); console.log(err);
+                this._notificationService.showNotification(new CustomNotification(err.error.message ?? 'Something went wrong', true, 3, err.error.body ?? err.error.error ?? ''));
                 this.allPlaylists = [];
             },
             complete: () => {
@@ -73,25 +75,44 @@ export class HomeComponent implements OnInit {
     private _getCacheData(): void {
         let tempObservable: Subscription = this._httpService.getPlayerHistory().subscribe({
             next: (music: MusicHistory) => {
-                this.currentPlaylist = music.playlistName!;
+                this.currentPlaylistInPlayer = music.playlistName!;
+                this.currentPlaylistInListing = music.playlistName!;
                 this.lastMusicDuration = music.pauseDuration!;
                 this.currentSong = music.musicName!;
             },
             error: (err: HttpErrorResponse) => this._notificationService.showNotification(new CustomNotification(err.error.message ?? 'Something went wrong', true, 3, err.error.body ?? err.error.error ?? '')),
             complete: () => {
                 tempObservable.unsubscribe();
-                if (this.currentPlaylist || this.currentSong || this.allSongsInPlaylist)
-                    this.changeCurrentFiles(0);
+                if (this.currentPlaylistInPlayer || this.currentSong || this.allSongsInPlaylist)
+                    this._getSongsInPlaylist();
             }
         })
     }
 
-    public updateSongsListing(s: [string[], string]): void {
-        this.allSongsInPlaylist = s[0];
-        this.currentPlaylist = s[1];
+    private _getSongsInPlaylist(): void {
+        if (this.currentPlaylistInPlayer) {
+            let tempObservable: Subscription = this._httpService.getMusicsOfPlaylist(this.currentPlaylistInPlayer).subscribe({
+                next: (songs: string[]) => { this.allSongsInPlaylist = songs; },
+                error: (err: HttpErrorResponse) => {
+                    this._notificationService.showNotification(new CustomNotification(err.error.message ?? 'Something went wrong', true, 3, err.error.body ?? err.error.error ?? ''));
+                    this.allSongsInPlaylist = [];
+                },
+                complete: () => {
+                    tempObservable.unsubscribe();
+                    this.changeCurrentFiles(0, true);
+                }
+            })
+        }
     }
 
-    public changeCurrentFiles(type: number, song?: string): void {
+    public updateSongsListing(s: [string[], string]): void {
+        this.allSongsInPlaylist = s[0];
+        this.currentPlaylistInListing = s[1];
+    }
+
+    public changeCurrentFiles(type: number, fromHistroy: boolean, data?: string[]): void {
+        this.fromHistroy = fromHistroy;
+        if (data) this.currentPlaylistInPlayer = data[1];
         let currentIndex = this.allSongsInPlaylist ? this.allSongsInPlaylist.indexOf(this.currentSong) : 0;
         if (type === 0) {
             this.previousSong = this.allSongsInPlaylist[currentIndex - 1] ?? undefined;
@@ -108,11 +129,10 @@ export class HomeComponent implements OnInit {
             this.nextSong = this.allSongsInPlaylist[currentIndex + 2] ?? undefined
         }
         else if (type === 3) {
-            currentIndex = this.allSongsInPlaylist.indexOf(song!);
+            currentIndex = this.allSongsInPlaylist.indexOf(data![0]);
             this.currentSong = this.allSongsInPlaylist[currentIndex] ?? undefined
             this.previousSong = this.allSongsInPlaylist[currentIndex - 1] ?? undefined
             this.nextSong = this.allSongsInPlaylist[currentIndex + 1] ?? undefined
-
         }
     }
 
@@ -126,5 +146,42 @@ export class HomeComponent implements OnInit {
         }
     }
 
+
+    public clearAllData(): void {
+        this.emptyPlayer = true;
+        let tempObservable: Subscription = this._httpService.deleteAllData().subscribe({
+            next: (m: ResponseMessage) => this._notificationService.showNotification(new CustomNotification(m.message ?? 'Deleted Successful', true, m.code ?? 1, m.body ?? "All the file(s) deleted successfully")),
+            error: (err: HttpErrorResponse) => {
+                this._notificationService.showNotification(new CustomNotification(err.error.message ?? 'Something went wrong', true, 3, err.error.body ?? err.error.error ?? ''));
+                this.emptyPlayer = false;
+            },
+            complete: () => {
+                tempObservable.unsubscribe();
+                this.allPlaylists = [];
+                this.allSongsInPlaylist = [];
+                this.currentPlaylistInListing = '';
+                this.currentPlaylistInPlayer = '';
+                this.currentSong = '';
+                this.emptyPlayer = false;
+            }
+        });
+    }
+
+    public clearCache(): void {
+        this.emptyPlayer = true;
+        let tempObservable: Subscription = this._httpService.clearCache().subscribe({
+            next: (m: ResponseMessage) => this._notificationService.showNotification(new CustomNotification(m.message ?? 'Cache Cleared', true, m.code ?? 1, m.body ?? "The Cache cleared successfully")),
+            error: (err: HttpErrorResponse) => {
+                this._notificationService.showNotification(new CustomNotification(err.error.message ?? 'Something went wrong', true, 3, err.error.body ?? err.error.error ?? ''));
+                this.emptyPlayer = false
+            },
+            complete: () => {
+                tempObservable.unsubscribe();
+                this.currentPlaylistInPlayer = '';
+                this.currentSong = '';
+                this.emptyPlayer = false;
+            }
+        });
+    }
 
 }

@@ -29,7 +29,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     var tempObservable: Subscription = this._http.getStatus().subscribe({
       next: (data: any) => {
         this.temp1 = data.status1;
-        this._notificationService.createNotification(data.status1, true, 3, "This is message from server")
+        this._notificationService.createNotification(data.status1, true, 3)
       },
       complete: () => tempObservable.unsubscribe()
     })

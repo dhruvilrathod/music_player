@@ -56,4 +56,16 @@ export class HttpService {
     public getPlayerHistory(): Observable<MusicHistory> {
         return this._http.get<MusicHistory>(Endpoints.GET_PLAYER_HISTORY);
     }
+
+    public setPlayerHistory(playerHistory: MusicHistory): Observable<ResponseMessage> {
+        return this._http.post<ResponseMessage>(Endpoints.ADD_UPDATE_CACHE, playerHistory);
+    }
+
+    public deleteAllData(): Observable<ResponseMessage> {
+        return this._http.delete(Endpoints.DELETE_ALL_DATA);
+    }
+
+    public clearCache(): Observable<ResponseMessage>{
+        return this._http.delete<ResponseMessage>(Endpoints.CLEAR_CACHE);
+    }
 }

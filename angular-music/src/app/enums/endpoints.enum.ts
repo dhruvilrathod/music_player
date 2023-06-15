@@ -11,5 +11,6 @@ export enum Endpoints {
     ADD_UPDATE_CACHE = 'player/addToCache',
     CLEAR_CACHE = 'player/clearCache',
     UPDATE_PLAYLIST_NAME ='files/updatePlaylistName',
-    UPDATE_MUSIC_NAME ='files/updateFileName'
+    UPDATE_MUSIC_NAME ='files/updateFileName',
+    DELETE_ALL_DATA = 'files/deleteAllData'
 }

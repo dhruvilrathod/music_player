@@ -12,13 +12,15 @@
         <div class="content-container-inside" id="parentContainer">
             <div class="content-sub-container" id="player">
                 <div class="music-player-container">
-                    <app-player class="music-player" [isPlaying]="isPlaying" (currentPlayingSong)="changeCurrentFiles($event)" [fileName]="currentSong" [nextFile]="nextSong" [previousFile]="previousSong" [playlist]="currentPlaylist" [isPlayerOnScreen]="currentTab === 1 ? true: false"></app-player>
+                    <app-player class="music-player" *ngIf="emptyPlayer === false" (toggleAudioOutput)="isPlaying = $event" [isPlaying]="isPlaying" [fromHistory]="fromHistroy" (currentPlayingSong)="changeCurrentFiles($event, false)" [fileName]="currentSong" [nextFile]="nextSong" [previousFile]="previousSong" [playlist]="currentPlaylistInPlayer" [isPlayerOnScreen]="currentTab === 1 ? true: false"></app-player>
                 </div>
             </div>
             <div class="content-sub-container" id="listing">
-                <app-listing [allPlaylists]="allPlaylists" (allSongsInCurrentPlaylistOutput)="updateSongsListing($event)" (toggleSongOutput)="isPlaying = $event" (newSongToPlay)="changeCurrentFiles(3, $event)" [isPlaying]="isPlaying" [currentPlaylist]="currentPlaylist" [currentSong]="currentSong"></app-listing>
+                <app-listing [allPlaylists]="allPlaylists" [emptyPlayer]="emptyPlayer" (allSongsInCurrentPlaylistOutput)="updateSongsListing($event)" (toggleSongOutput)="isPlaying = $event" (newSongToPlay)="changeCurrentFiles(3, false,$event)" [isPlaying]="isPlaying" [currentPlaylist]="currentPlaylistInListing" [currentPlaylistInPlayer]="currentPlaylistInPlayer" [currentSong]="currentSong"></app-listing>
             </div>
         </div>
-
+        <div style="display: flex; justify-content: space-between;">
+            <button (click)="clearAllData()" class="general-button general-button-danger">Clear All Data</button><button (click)="clearCache()" class="general-button general-button-danger">Clear Cache</button>
+        </div>
     </div>
 </div>

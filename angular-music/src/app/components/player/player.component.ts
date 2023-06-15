@@ -1,5 +1,10 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { Endpoints, QueryParams } from 'src/app/enums';
+import { CustomNotification, MusicHistory, ResponseMessage } from 'src/app/interfaces';
+import { HttpService } from 'src/app/services/http/http.service';
+import { NotificationService } from 'src/app/services/notification/notification.service';
 import { environment } from 'src/environments/environment.development';
 
 
@@ -13,12 +18,14 @@ const jsmediatags = (window as any).jsmediatags;
 export class PlayerComponent implements OnInit, AfterViewInit, OnChanges {
 
     @Input() playlist!: string;
-    @Input() fileName: string = 'Baarish.mp3';
+    @Input() fileName!: string;
     @Input() previousFile!: string;
     @Input() nextFile!: string;
     @Input() isPlayerOnScreen!: boolean;
+    @Input() fromHistory!: boolean;
 
     @Output() currentPlayingSong: EventEmitter<number> = new EventEmitter<number>();
+    @Output() toggleAudioOutput: EventEmitter<boolean> = new EventEmitter<boolean>();
 
     @ViewChild('audio') audioTag!: ElementRef;
     @ViewChild('audioTagContainer') audioTagContainer!: ElementRef;
@@ -39,6 +46,11 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnChanges {
 
     public song: any;
 
+    constructor(
+        private _notificationService: NotificationService,
+        private _httpService: HttpService
+    ) { }
+
 
     ngOnInit(): void {
         this.isLoading = true;
@@ -55,58 +67,39 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        console.log(changes);
-        console.log(this.fileName);
-        console.log(this.previousFile);
-        console.log(this.nextFile);
-        console.log(this.playlist);
+
         if (changes['fileName']) {
             this.tempFileSourceElem = `${environment.baseURL}/${Endpoints.GET_MUSIC_FILE}?${QueryParams.PLAYLIST_NAME}=${this.playlist}&${QueryParams.FILE_NAME}=${this.fileName}`;
             this.tempFileSource = `${Endpoints.GET_MUSIC_FILE}?${QueryParams.PLAYLIST_NAME}=${this.playlist}&${QueryParams.FILE_NAME}=${this.fileName}`;
-            console.log(this.tempFileSource);
             this.feedDataToPlayer();
+        }
+
+        if (changes['isPlaying']) {
+            if (this.player) this.toggleAudio(changes['isPlaying'].currentValue);
         }
     }
 
 
     public feedDataToPlayer(): void {
-        this.playlist && this.fileName &&
+        this.playlist && this.fileName != undefined &&
             this.createFile(this.tempFileSourceElem, this.fileName, `audio/${this.fileName.split('.').pop()}`).then((file: File) => {
                 jsmediatags.read(file, {
                     onSuccess: (songObj: any) => {
                         this.song = songObj;
-                        console.log(songObj);
                         const data = (songObj.tags.picture) ? songObj.tags.picture.data : '';
-                        const format = (songObj.tags.picture) ? songObj.tags.picture.format: '';
+                        const format = (songObj.tags.picture) ? songObj.tags.picture.format : '';
                         let base64String = "";
                         for (let i = 0; i < data.length; i++) {
                             base64String += String.fromCharCode(data[i])
                         }
                         (this.musicLogo.nativeElement as HTMLImageElement).src = `data:${format};base64,${window.btoa(base64String)}`;
 
-                        let elemParent = this.audioTagContainer.nativeElement as HTMLDivElement;
-                        elemParent.innerHTML = `<audio id="audio"> <source src="${this.tempFileSourceElem}" type="audio/*"> </audio>`;
-
-                        (elemParent.firstChild as HTMLAudioElement).onloadeddata = function (e) {
-                            console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
-                            
-                        }
-                        
-                        console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', (elemParent.firstChild as HTMLAudioElement).duration);
-
-                        setInterval(() => {
-                            this.currentTime = (elemParent.firstChild as HTMLAudioElement).currentTime * 1000 - 1800000;
-                            this.sliderValue = Math.floor((elemParent.firstChild as HTMLAudioElement).currentTime / (elemParent.firstChild as HTMLAudioElement).duration * 1000);
-                        }, 1000);
-
-                        setInterval(() => {
-                            if ((elemParent.firstChild as HTMLAudioElement).duration > 0 && !(elemParent.firstChild as HTMLAudioElement).paused)
-                                console.log("update server", (elemParent.firstChild as HTMLAudioElement).currentTime);
-                        }, 1000)
-
+                        this.player = this.audioTag.nativeElement;
+                        this.player.load();
+                        this.player.addEventListener("loadeddata", this.playerRegister.bind(this));
                         this.isLoading = false;
                     },
-                    onError: (err: any) => { console.log(err); this.isLoading = false }
+                    onError: (err: any) => { this.isLoading = false }
                 });
             });
     }
@@ -121,8 +114,6 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     public playerRegister() {
-        console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', this.player.duration);
-
         setInterval(() => {
             this.currentTime = this.player.currentTime * 1000 - 1800000;
             this.sliderValue = Math.floor(this.player.currentTime / this.player.duration * 1000);
@@ -130,13 +121,15 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnChanges {
 
         setInterval(() => {
             if (this.player.duration > 0 && !this.player.paused)
-                console.log("update server", this.player.currentTime);
+                this._updateMusicHistory();
         }, 1000)
+        this.toggleAudio(this.fromHistory ? false : true);
     }
 
 
     public toggleAudio(value: boolean): void {
         this.isPlaying = value;
+        this.toggleAudioOutput.emit(value);
         if (value)
             this.player.play();
         else {
@@ -154,5 +147,20 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnChanges {
 
     public changeCurrentTime(e: Event) {
         this.player.currentTime = (parseInt((e.target as HTMLInputElement).value) * this.player.duration) / 1000;
+    }
+
+    private _updateMusicHistory(): void {
+        let history: MusicHistory = {
+            musicName: this.fileName,
+            playlistName: this.playlist,
+            pauseDuration: this.player.duration
+        }
+        let tempObservable: Subscription = this._httpService.setPlayerHistory(history).subscribe({
+            next: (res: ResponseMessage) => { },
+            error: (err: HttpErrorResponse) => { },
+            complete: () => {
+                tempObservable.unsubscribe();
+            }
+        })
     }
 }

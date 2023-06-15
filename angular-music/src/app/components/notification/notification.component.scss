@@ -12,7 +12,7 @@
     margin: 0 16px;
     gap: 16px;
     height: 100%;
-    padding-top: 16px;
+    padding: 16px 0;
 }
 
 .notification-title-container {
@@ -27,7 +27,7 @@
 .notification-body {
     color: white;
     display: block;
-    padding: 16px;
+    padding: 0 16px 16px 16px;
 }
 
 .notification-controller {

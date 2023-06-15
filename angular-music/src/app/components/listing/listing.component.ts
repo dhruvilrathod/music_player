@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CustomNotification, MusicHistory, ResponseMessage } from 'src/app/interfaces';
 import { HttpService } from 'src/app/services/http/http.service';
@@ -10,7 +10,7 @@ import { NotificationService } from 'src/app/services/notification/notification.
     templateUrl: './listing.component.html',
     styleUrls: ['./listing.component.scss']
 })
-export class ListingComponent implements OnInit {
+export class ListingComponent implements OnInit, OnChanges {
 
     private _playlistToUpdate!: string;
 
@@ -18,8 +18,10 @@ export class ListingComponent implements OnInit {
     @Input() allPlaylists!: string[];
     @Input() currentSong!: string;
     @Input() isPlaying!: boolean;
+    @Input() currentPlaylistInPlayer!: string;
+    @Input() emptyPlayer!: boolean
 
-    @Output() newSongToPlay: EventEmitter<string> = new EventEmitter<string>();
+    @Output() newSongToPlay: EventEmitter<[string, string]> = new EventEmitter<[string, string]>();
     @Output() toggleSongOutput: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() allSongsInCurrentPlaylistOutput: EventEmitter<[string[], string]> = new EventEmitter<[string[], string]>();
 
@@ -34,14 +36,12 @@ export class ListingComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        console.log(this.allPlaylists);
-        console.log(this.currentPlaylist);
-        console.log(this.currentSong);
-        console.log(this.allSongsInCurrentPlaylist);
+    }
 
-        // this.allPlaylists = ['abcd', 'adfasdfsdf'];
-        // this.currentPlaylist = this.allPlaylists[0];
-        this.playlistSelected('aaa');
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes['currentPlaylist'])
+            this._getSongsInPlaylist();
+        if (changes['emptyPlayer'] && changes['emptyPlayer'].currentValue === true) this.allSongsInCurrentPlaylist = [];
     }
 
     private _getSongsInPlaylist(): void {
@@ -53,7 +53,7 @@ export class ListingComponent implements OnInit {
                     this.allSongsInCurrentPlaylist = [];
                     this.allSongsInCurrentPlaylistOutput.emit([[], this.currentPlaylist]);
                 },
-                complete: () => {                    
+                complete: () => {
                     tempObservable.unsubscribe();
                     console.log(this.allSongsInCurrentPlaylist);
                     this.allSongsInCurrentPlaylistOutput.emit([this.allSongsInCurrentPlaylist, this.currentPlaylist]);
@@ -62,8 +62,8 @@ export class ListingComponent implements OnInit {
         }
     }
 
-    public songSelectedToPlay(s: string) {        
-        this.newSongToPlay.emit(s);
+    public songSelectedToPlay(s: string) {
+        this.newSongToPlay.emit([s, this.currentPlaylist]);
         this.toggleSongOutput.emit(true);
     }
 
@@ -85,7 +85,7 @@ export class ListingComponent implements OnInit {
             complete: () => {
                 tempObservable.unsubscribe();
                 Object.keys((e.target as HTMLInputElement).files!).forEach((file: string) => {
-                    this.allSongsInCurrentPlaylist.push(file);
+                    this.allSongsInCurrentPlaylist.push((e.target as HTMLInputElement).files![file as any].name);
                 });
             }
         });

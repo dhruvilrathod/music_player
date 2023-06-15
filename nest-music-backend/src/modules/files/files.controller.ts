@@ -70,4 +70,9 @@ export class FilesController {
     async fileUpload(@UploadedFiles() files: Express.Multer.File[], @Req() req: Request): Promise<ResponseMessage | void> {
         return this._fileService.saveFiles(files, req);
     }
+
+    @Delete('deleteAllData') 
+    deleteAllData(): ResponseMessage {
+        return this._fileService.deleteAllData();
+    }
 }
