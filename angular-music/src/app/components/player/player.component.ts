@@ -97,6 +97,7 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnChanges {
                         this.player = this.audioTag.nativeElement;
                         this.player.load();
                         this.player.addEventListener("loadeddata", this.playerRegister.bind(this));
+                        this.player.addEventListener("ended", this.songEnded.bind(this), { once: true});
                         this.isLoading = false;
                     },
                     onError: (err: any) => { this.isLoading = false }
@@ -117,13 +118,21 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnChanges {
         setInterval(() => {
             this.currentTime = this.player.currentTime * 1000 - 1800000;
             this.sliderValue = Math.floor(this.player.currentTime / this.player.duration * 1000);
-        }, 1000);
-
-        setInterval(() => {
             if (this.player.duration > 0 && !this.player.paused)
                 this._updateMusicHistory();
-        }, 1000)
+        }, 1000);
+
         this.toggleAudio(this.fromHistory ? false : true);
+    }
+
+    public songEnded() {
+        if (this.nextFile) {
+            setTimeout(() => {
+                this.fileChange(2);
+                this.player.removeEventListener("ended",(e) => { console.log("listener removed") });
+            }, 2000);
+        }
+
     }
 
 

@@ -13,7 +13,6 @@ import { ErrorComponent } from './components/error/error.component';
 import { HttpClientInterceptor } from './interceptors/http/http-client.interceptor';
 import { environment } from 'src/environments/environment.development';
 import { NotificationContainerComponent } from './components/notification-container/notification-container.component';
-import { ListingRecordComponent } from './components/listing-record/listing-record.component';
 
 @NgModule({
   declarations: [
@@ -23,8 +22,7 @@ import { ListingRecordComponent } from './components/listing-record/listing-reco
     ListingComponent,
     NotificationComponent,
     ErrorComponent,
-    NotificationContainerComponent,
-    ListingRecordComponent
+    NotificationContainerComponent
   ],
   imports: [
     BrowserModule,

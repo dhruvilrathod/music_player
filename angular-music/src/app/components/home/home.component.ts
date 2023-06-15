@@ -28,6 +28,7 @@ export class HomeComponent implements OnInit {
     public isPlaying: boolean = false;
     public fromHistroy: boolean = false;
     public emptyPlayer: boolean = false;
+    public emptyListing: boolean = false;
 
     constructor(
         private _notificationService: NotificationService,
@@ -35,7 +36,6 @@ export class HomeComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.tabChange(2);
         this._getAllPlaylists();
     }
 
@@ -110,7 +110,8 @@ export class HomeComponent implements OnInit {
         this.currentPlaylistInListing = s[1];
     }
 
-    public changeCurrentFiles(type: number, fromHistroy: boolean, data?: string[]): void {
+    public changeCurrentFiles(type: number, fromHistroy: boolean, data?: string[]): void {        
+        this.emptyPlayer = true;
         this.fromHistroy = fromHistroy;
         if (data) this.currentPlaylistInPlayer = data[1];
         let currentIndex = this.allSongsInPlaylist ? this.allSongsInPlaylist.indexOf(this.currentSong) : 0;
@@ -134,6 +135,7 @@ export class HomeComponent implements OnInit {
             this.previousSong = this.allSongsInPlaylist[currentIndex - 1] ?? undefined
             this.nextSong = this.allSongsInPlaylist[currentIndex + 1] ?? undefined
         }
+        this.emptyPlayer = false;
     }
 
     public onResize(e: Event) {
@@ -149,6 +151,8 @@ export class HomeComponent implements OnInit {
 
     public clearAllData(): void {
         this.emptyPlayer = true;
+        this.emptyListing = true;
+        this.isPlaying = false;
         let tempObservable: Subscription = this._httpService.deleteAllData().subscribe({
             next: (m: ResponseMessage) => this._notificationService.showNotification(new CustomNotification(m.message ?? 'Deleted Successful', true, m.code ?? 1, m.body ?? "All the file(s) deleted successfully")),
             error: (err: HttpErrorResponse) => {
@@ -163,12 +167,14 @@ export class HomeComponent implements OnInit {
                 this.currentPlaylistInPlayer = '';
                 this.currentSong = '';
                 this.emptyPlayer = false;
+                this.emptyListing = false;
             }
         });
     }
 
     public clearCache(): void {
         this.emptyPlayer = true;
+        this.isPlaying = false;
         let tempObservable: Subscription = this._httpService.clearCache().subscribe({
             next: (m: ResponseMessage) => this._notificationService.showNotification(new CustomNotification(m.message ?? 'Cache Cleared', true, m.code ?? 1, m.body ?? "The Cache cleared successfully")),
             error: (err: HttpErrorResponse) => {

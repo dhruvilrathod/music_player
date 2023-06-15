@@ -1,8 +1,7 @@
 import { trigger, transition, style, animate } from '@angular/animations';
-import { Component, DoCheck, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CustomNotification } from 'src/app/interfaces';
 import { NotificationService } from 'src/app/services/notification/notification.service';
-import { fadeAnimations } from 'src/assets/animations';
 
 @Component({
   selector: 'app-notification',

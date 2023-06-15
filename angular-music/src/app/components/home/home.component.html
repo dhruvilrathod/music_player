@@ -16,11 +16,17 @@
                 </div>
             </div>
             <div class="content-sub-container" id="listing">
-                <app-listing [allPlaylists]="allPlaylists" [emptyPlayer]="emptyPlayer" (allSongsInCurrentPlaylistOutput)="updateSongsListing($event)" (toggleSongOutput)="isPlaying = $event" (newSongToPlay)="changeCurrentFiles(3, false,$event)" [isPlaying]="isPlaying" [currentPlaylist]="currentPlaylistInListing" [currentPlaylistInPlayer]="currentPlaylistInPlayer" [currentSong]="currentSong"></app-listing>
+                <app-listing [allPlaylists]="allPlaylists" [emptyListing]="emptyListing" (allSongsInCurrentPlaylistOutput)="updateSongsListing($event)" (toggleSongOutput)="isPlaying = $event" (newSongToPlay)="changeCurrentFiles(3, false,$event)" [isPlaying]="isPlaying" [currentPlaylist]="currentPlaylistInListing" [currentPlaylistInPlayer]="currentPlaylistInPlayer" [currentSong]="currentSong"></app-listing>
             </div>
         </div>
         <div style="display: flex; justify-content: space-between;">
-            <button (click)="clearAllData()" class="general-button general-button-danger">Clear All Data</button><button (click)="clearCache()" class="general-button general-button-danger">Clear Cache</button>
+            <div>
+                Designed and developed by <a href="https://github.com/dhruvilrathod">Dhruvil</a>
+            </div>
+            <div>
+                <button style="margin: 0 10px;" (click)="clearAllData()" class="general-button general-button-danger">Clear All Data</button>
+                <button style="margin: 0 10px;" (click)="clearCache()" class="general-button general-button-danger">Clear Cache</button>
+            </div>
         </div>
     </div>
 </div>

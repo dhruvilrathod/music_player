@@ -19,7 +19,7 @@ export class ListingComponent implements OnInit, OnChanges {
     @Input() currentSong!: string;
     @Input() isPlaying!: boolean;
     @Input() currentPlaylistInPlayer!: string;
-    @Input() emptyPlayer!: boolean
+    @Input() emptyListing!: boolean
 
     @Output() newSongToPlay: EventEmitter<[string, string]> = new EventEmitter<[string, string]>();
     @Output() toggleSongOutput: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -41,7 +41,7 @@ export class ListingComponent implements OnInit, OnChanges {
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['currentPlaylist'])
             this._getSongsInPlaylist();
-        if (changes['emptyPlayer'] && changes['emptyPlayer'].currentValue === true) this.allSongsInCurrentPlaylist = [];
+        if (changes['emptyListing'] && changes['emptyListing'].currentValue === true) this.allSongsInCurrentPlaylist = [];
     }
 
     private _getSongsInPlaylist(): void {
@@ -55,7 +55,6 @@ export class ListingComponent implements OnInit, OnChanges {
                 },
                 complete: () => {
                     tempObservable.unsubscribe();
-                    console.log(this.allSongsInCurrentPlaylist);
                     this.allSongsInCurrentPlaylistOutput.emit([this.allSongsInCurrentPlaylist, this.currentPlaylist]);
                 }
             })
