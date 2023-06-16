@@ -1,8 +1,8 @@
-import { BadRequestException, ConflictException, Inject, Injectable, InternalServerErrorException, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { enviornment } from 'src/enviornment/enviornment';
+import { enviornment } from '../../enviornment/enviornment';
 import * as fs from 'fs';
-import { ResponseMessage } from 'src/assets/interfaces';
+import { ResponseMessage } from '../../assets/interfaces/response.interface';
 import * as path from 'path';
 import { PlayerService } from '../player/player.service';
 
@@ -11,7 +11,7 @@ const uploadFolderPath: string = __dirname + '../../../../';
 @Injectable()
 export class FilesService {
 
-    constructor(private _playerService: PlayerService) { 
+    constructor(private _playerService: PlayerService) {
     }
 
     fileServiceStatus(): boolean {

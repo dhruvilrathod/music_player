@@ -15,7 +15,7 @@ const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'error'
+    redirectTo: ''
   }
 ];
 

@@ -1,17 +1,19 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Res } from '@nestjs/common';
 import { AppService } from './app.service';
+import { Response } from 'express';
+import { join } from 'path';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+    constructor(private readonly appService: AppService) { }
 
-//   @Get()
-//   root(): string {
-//     return this.appService.getHello();
-//   }
+    // @Get()
+    // root(@Res() res: Response): void {
+    //     return res.sendFile(join(__dirname, '..','frontend', 'angular-music', 'index.html'));
+    // }
 
-  @Get('server_status') 
-  getServerStatus(): boolean {
-    return this.appService.getServerStatus();
-  } 
+    @Get('api/server_status')
+    getServerStatus(): boolean {
+        return this.appService.getServerStatus();
+    }
 }

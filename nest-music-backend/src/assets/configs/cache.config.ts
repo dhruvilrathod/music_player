@@ -1,6 +1,6 @@
 import { Request } from "express";
 import { diskStorage } from "multer";
-import { enviornment } from "src/enviornment/enviornment";
+import { enviornment } from "../../enviornment/enviornment";
 import * as fs from "fs";
 
 export const cacheConfig = diskStorage({

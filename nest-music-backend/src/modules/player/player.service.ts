@@ -1,7 +1,8 @@
-import { Body, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {  Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as fs from 'fs';
-import { MusicHistory, ResponseMessage } from 'src/assets/interfaces';
-import { enviornment } from 'src/enviornment/enviornment';
+import { MusicHistory } from '../../assets/interfaces/music-history.interface';
+import { ResponseMessage } from '../../assets/interfaces/response.interface';
+import { enviornment } from '../../enviornment/enviornment';
 
 
 const cacheFolderPath: string = __dirname + '../../../../';
