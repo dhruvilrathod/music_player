@@ -1,0 +1,3 @@
+nestjs build using webpack: single file
+
+for electron, change the base-url in index.html from / to ./ and add server.js (single build) to script src
