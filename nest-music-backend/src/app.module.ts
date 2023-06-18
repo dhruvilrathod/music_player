@@ -1,4 +1,4 @@
-import { Module, RequestMethod } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { FilesModule } from './modules/files/files.module';
@@ -6,6 +6,7 @@ import { PlayerModule } from './modules/player/player.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { AppRoutingModule } from './app-routing.module';
+import { enviornment } from './enviornment/enviornment';
 
 @Module({
     imports: [
@@ -13,7 +14,7 @@ import { AppRoutingModule } from './app-routing.module';
         FilesModule,
         PlayerModule,
         ServeStaticModule.forRoot({
-            rootPath: (join(__dirname, `../frontend/angular-music`)),
+            rootPath: (join(__dirname, enviornment.staticAssetsFrontend)),
         })
     ],
     controllers: [AppController],

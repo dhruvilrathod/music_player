@@ -56605,6 +56605,7 @@ const player_module_1 = __webpack_require__(59845);
 const serve_static_1 = __webpack_require__(50664);
 const path_1 = __webpack_require__(71017);
 const app_routing_module_1 = __webpack_require__(905);
+const enviornment_1 = __webpack_require__(15548);
 let AppModule = exports.AppModule = class AppModule {
 };
 exports.AppModule = AppModule = __decorate([
@@ -56614,7 +56615,7 @@ exports.AppModule = AppModule = __decorate([
             files_module_1.FilesModule,
             player_module_1.PlayerModule,
             serve_static_1.ServeStaticModule.forRoot({
-                rootPath: ((0, path_1.join)(__dirname, `./frontend/angular-music`)),
+                rootPath: ((0, path_1.join)(__dirname, enviornment_1.enviornment.staticAssetsFrontend)),
             })
         ],
         controllers: [app_controller_1.AppController],
@@ -56689,7 +56690,9 @@ exports.enviornment = void 0;
 exports.enviornment = {
     production: false,
     upload_dir: './uploads/playlists',
-    cache_dir: './cache'
+    cache_dir: './cache',
+    staticAssetsUpload: '../uploads',
+    staticAssetsFrontend: '../frontend/angular-music'
 };
 
 
@@ -59121,11 +59124,12 @@ __webpack_unused_export__ = ({ value: true });
 const core_1 = __webpack_require__(460);
 const app_module_1 = __webpack_require__(78858);
 const path = __webpack_require__(71017);
+const enviornment_1 = __webpack_require__(15548);
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.enableCors();
-    app.useStaticAssets(path.join(__dirname + './uploads'));
-    app.useStaticAssets(path.join(__dirname + './frontend/angular-music'));
+    app.useStaticAssets(path.join(__dirname + enviornment_1.enviornment.staticAssetsUpload));
+    app.useStaticAssets(path.join(__dirname + enviornment_1.enviornment.staticAssetsFrontend));
     await app.listen(26091);
 }
 bootstrap();
