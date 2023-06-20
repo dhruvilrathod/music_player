@@ -1,6 +1,6 @@
 import { Request } from "express";
 import { diskStorage } from "multer";
-import { enviornment } from "../../enviornment/enviornment";
+import { enviornment } from "../../environment/environment";
 import * as fs from "fs";
 
 export const storageConfig = diskStorage({

@@ -1,7 +1,10 @@
 import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
 import { PlayerService } from './player.service';
-import { MusicHistory } from '../../assets/interfaces/music-history.interface';
-import { ResponseMessage } from '../../assets/interfaces/response.interface';
+// import { MusicHistory } from '../../assets/interfaces/music-history.interface';
+// import { ResponseMessage } from '../../assets/interfaces/response.interface';
+
+import { MusicHistory, ResponseMessage } from '../../assets/interfaces';
+
 @Controller()
 export class PlayerController {
     constructor (

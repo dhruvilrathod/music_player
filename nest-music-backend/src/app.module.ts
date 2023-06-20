@@ -6,7 +6,7 @@ import { PlayerModule } from './modules/player/player.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { AppRoutingModule } from './app-routing.module';
-import { enviornment } from './enviornment/enviornment';
+import { enviornment } from './environment/environment';
 
 @Module({
     imports: [

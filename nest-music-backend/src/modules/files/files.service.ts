@@ -1,10 +1,12 @@
 import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { enviornment } from '../../enviornment/enviornment';
+import { enviornment } from '../../environment/environment';
 import * as fs from 'fs';
-import { ResponseMessage } from '../../assets/interfaces/response.interface';
 import * as path from 'path';
+// import { ResponseMessage } from '../../assets/interfaces/response.interface';
 import { PlayerService } from '../player/player.service';
+
+import { ResponseMessage } from '../../assets/interfaces';
 
 const uploadFolderPath: string = __dirname + '../../../../';
 

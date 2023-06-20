@@ -1,10 +1,14 @@
 import { Controller, Delete, Get, Post, Req, Res, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { FilesService } from './files.service';
-import { storageConfig } from '../../assets/configs/storage.config';
 import { Request, Response } from 'express';
 import { MulterError } from 'multer';
-import { ResponseMessage } from '../../assets/interfaces/response.interface';
+// import { storageConfig } from '../../assets/configs/storage.config';
+// import { ResponseMessage } from '../../assets/interfaces/response.interface';
+
+import { storageConfig } from '../../assets/configs';
+import { ResponseMessage } from '../../assets/interfaces';
+
 @Controller()
 export class FilesController {
 

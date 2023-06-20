@@ -114,7 +114,13 @@ let prod =
             new CleanWebpackPlugin(),
             new webpack.IgnorePlugin(WebPackIgnorePlugin),
             new webpack.NormalModuleReplacementPlugin(
-                /src\/environment\/environment\.ts/, `./environment/environment.prod.ts`
+                /(\benvironment\b)(?!.*\1)/,
+                function (resource) {
+                    resource.request = resource.request.replace(
+                        /(\benvironment\b)(?!.*\1)/,
+                        `environment.prod`
+                    );
+                }
             )
         ],
     optimization:
@@ -134,10 +140,5 @@ let prod =
 };
 
 module.exports = (env) => {
-    if(!env.environment) {
-        console.log('dev called');
-        return dev;
-    };
-    console.log('prod called');
-    return prod;
+    return !env.environment ? dev: prod;
 }

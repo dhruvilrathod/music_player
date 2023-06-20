@@ -1,9 +1,11 @@
 import {  Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as fs from 'fs';
-import { MusicHistory } from '../../assets/interfaces/music-history.interface';
-import { ResponseMessage } from '../../assets/interfaces/response.interface';
-import { enviornment } from '../../enviornment/enviornment';
+// import { MusicHistory } from '../../assets/interfaces/music-history.interface';
+// import { ResponseMessage } from '../../assets/interfaces/response.interface';
 
+import { enviornment } from '../../environment/environment';
+
+import { MusicHistory, ResponseMessage } from '../../assets/interfaces';
 
 const cacheFolderPath: string = __dirname + '../../../../';
 const cacheFileName: string = 'music_history.json';

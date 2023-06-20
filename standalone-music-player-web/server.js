@@ -56605,7 +56605,7 @@ const player_module_1 = __webpack_require__(59845);
 const serve_static_1 = __webpack_require__(50664);
 const path_1 = __webpack_require__(71017);
 const app_routing_module_1 = __webpack_require__(905);
-const enviornment_1 = __webpack_require__(15548);
+const environment_1 = __webpack_require__(2347);
 let AppModule = exports.AppModule = class AppModule {
 };
 exports.AppModule = AppModule = __decorate([
@@ -56615,7 +56615,7 @@ exports.AppModule = AppModule = __decorate([
             files_module_1.FilesModule,
             player_module_1.PlayerModule,
             serve_static_1.ServeStaticModule.forRoot({
-                rootPath: ((0, path_1.join)(__dirname, enviornment_1.enviornment.staticAssetsFrontend)),
+                rootPath: ((0, path_1.join)(__dirname, environment_1.enviornment.staticAssetsFrontend)),
             })
         ],
         controllers: [app_controller_1.AppController],
@@ -56655,19 +56655,19 @@ exports.AppService = AppService = __decorate([
 
 /***/ }),
 
-/***/ 2070:
+/***/ 97766:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.storageConfig = void 0;
+exports.cacheConfig = void 0;
 const multer_1 = __webpack_require__(51370);
-const enviornment_1 = __webpack_require__(15548);
+const environment_1 = __webpack_require__(2347);
 const fs = __webpack_require__(57147);
-exports.storageConfig = (0, multer_1.diskStorage)({
+exports.cacheConfig = (0, multer_1.diskStorage)({
     destination: (req, file, callback) => {
-        const dir = `${enviornment_1.enviornment.upload_dir}/${req.query.playlist}`;
+        const dir = `${environment_1.enviornment.upload_dir}/${req.query.playlist}`;
         if (!fs.existsSync(dir))
             fs.mkdirSync(dir);
         callback(null, dir);
@@ -56680,7 +56680,58 @@ exports.storageConfig = (0, multer_1.diskStorage)({
 
 /***/ }),
 
-/***/ 15548:
+/***/ 31345:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+__exportStar(__webpack_require__(97766), exports);
+__exportStar(__webpack_require__(2070), exports);
+
+
+/***/ }),
+
+/***/ 2070:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.storageConfig = void 0;
+const multer_1 = __webpack_require__(51370);
+const environment_1 = __webpack_require__(2347);
+const fs = __webpack_require__(57147);
+exports.storageConfig = (0, multer_1.diskStorage)({
+    destination: (req, file, callback) => {
+        const dir = `${environment_1.enviornment.upload_dir}/${req.query.playlist}`;
+        if (!fs.existsSync(dir))
+            fs.mkdirSync(dir);
+        callback(null, dir);
+    },
+    filename: (req, file, callback) => {
+        callback(null, file.originalname);
+    }
+});
+
+
+/***/ }),
+
+/***/ 2347:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -56688,11 +56739,11 @@ exports.storageConfig = (0, multer_1.diskStorage)({
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.enviornment = void 0;
 exports.enviornment = {
-    production: false,
+    production: true,
     upload_dir: './uploads/playlists',
     cache_dir: './cache',
-    staticAssetsUpload: '../uploads',
-    staticAssetsFrontend: '../frontend/angular-music'
+    staticAssetsUpload: './uploads',
+    staticAssetsFrontend: './frontend/angular-music'
 };
 
 
@@ -56720,8 +56771,8 @@ exports.FilesController = void 0;
 const common_1 = __webpack_require__(29970);
 const platform_express_1 = __webpack_require__(90132);
 const files_service_1 = __webpack_require__(83542);
-const storage_config_1 = __webpack_require__(2070);
 const multer_1 = __webpack_require__(51370);
+const configs_1 = __webpack_require__(31345);
 let FilesController = exports.FilesController = class FilesController {
     constructor(_fileService) {
         this._fileService = _fileService;
@@ -56825,7 +56876,7 @@ __decorate([
 __decorate([
     (0, common_1.Post)('upload'),
     (0, common_1.UseInterceptors)((0, platform_express_1.FilesInterceptor)('files', undefined, {
-        storage: storage_config_1.storageConfig,
+        storage: configs_1.storageConfig,
         fileFilter: (req, files, callback) => {
             if (files.originalname.match(/^.*\.(mp3|aac|mp4|m4a|flac)$/))
                 callback(null, true);
@@ -56899,7 +56950,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.FilesService = void 0;
 const common_1 = __webpack_require__(29970);
-const enviornment_1 = __webpack_require__(15548);
+const environment_1 = __webpack_require__(2347);
 const fs = __webpack_require__(57147);
 const path = __webpack_require__(71017);
 const player_service_1 = __webpack_require__(74270);
@@ -56912,10 +56963,10 @@ let FilesService = exports.FilesService = class FilesService {
         return true;
     }
     createNewPlaylistFolder(req) {
-        if (fs.existsSync(`${enviornment_1.enviornment.upload_dir}/${req.query.playlist}`))
+        if (fs.existsSync(`${environment_1.enviornment.upload_dir}/${req.query.playlist}`))
             throw new common_1.ConflictException("Playlist already exists", { cause: new Error(), description: "The playlist you are trying to create already exists." });
         else
-            fs.mkdirSync(`${enviornment_1.enviornment.upload_dir}/${req.query.playlist}`);
+            fs.mkdirSync(`${environment_1.enviornment.upload_dir}/${req.query.playlist}`);
         const response = {
             message: "Playlist created successfully",
             body: "The Playlist has been created"
@@ -56925,8 +56976,8 @@ let FilesService = exports.FilesService = class FilesService {
     deletePlaylistFolder(req) {
         try {
             req.body.playlists.map((p) => {
-                if (fs.existsSync(`${enviornment_1.enviornment.upload_dir}/${p}`))
-                    fs.rmSync(`${enviornment_1.enviornment.upload_dir}/${p}`, { recursive: true, force: true });
+                if (fs.existsSync(`${environment_1.enviornment.upload_dir}/${p}`))
+                    fs.rmSync(`${environment_1.enviornment.upload_dir}/${p}`, { recursive: true, force: true });
             });
             const response = {
                 message: "Playlist deleted successfully",
@@ -56941,8 +56992,8 @@ let FilesService = exports.FilesService = class FilesService {
     deleteFileFromFolder(req) {
         try {
             req.body.files.map((f) => {
-                if (fs.existsSync(`${enviornment_1.enviornment.upload_dir}/${req.body.playlist}`))
-                    fs.rmSync(`${enviornment_1.enviornment.upload_dir}/${req.body.playlist}/${f}`, { force: true });
+                if (fs.existsSync(`${environment_1.enviornment.upload_dir}/${req.body.playlist}`))
+                    fs.rmSync(`${environment_1.enviornment.upload_dir}/${req.body.playlist}/${f}`, { force: true });
             });
             const response = {
                 message: "Music deleted successfully",
@@ -56955,22 +57006,22 @@ let FilesService = exports.FilesService = class FilesService {
         }
     }
     getPlaylistsListing() {
-        if (fs.readdirSync(`${enviornment_1.enviornment.upload_dir}`) && fs.readdirSync(`${enviornment_1.enviornment.upload_dir}`).length == 0)
+        if (fs.readdirSync(`${environment_1.enviornment.upload_dir}`) && fs.readdirSync(`${environment_1.enviornment.upload_dir}`).length == 0)
             throw new common_1.NotFoundException("No Playlists Available", { cause: new Error(), description: "There are no playlists available right now." });
-        return fs.readdirSync(`${enviornment_1.enviornment.upload_dir}`);
+        return fs.readdirSync(`${environment_1.enviornment.upload_dir}`);
     }
     getMusicFilesListing(req) {
-        return fs.readdirSync(`${enviornment_1.enviornment.upload_dir}/${req.query.playlist}`);
+        return fs.readdirSync(`${environment_1.enviornment.upload_dir}/${req.query.playlist}`);
     }
     getSavedFileFromServer(req, res) {
-        if (!fs.existsSync(`${enviornment_1.enviornment.upload_dir}/${req.query.playlist}/${req.query.fileName}`))
+        if (!fs.existsSync(`${environment_1.enviornment.upload_dir}/${req.query.playlist}/${req.query.fileName}`))
             throw new common_1.NotFoundException("File not found", { cause: new Error(), description: "The file is not availabe" });
-        return res.sendFile(path.join(uploadFolderPath, `${enviornment_1.enviornment.upload_dir}/${req.query.playlist}/${req.query.fileName}`));
+        return res.sendFile(path.join(uploadFolderPath, `${environment_1.enviornment.upload_dir}/${req.query.playlist}/${req.query.fileName}`));
     }
     saveFiles(files, req) {
         try {
             files.map((f, i) => {
-                if (!fs.existsSync(`${enviornment_1.enviornment.upload_dir}/${req.query.playlist}/${f.originalname}`))
+                if (!fs.existsSync(`${environment_1.enviornment.upload_dir}/${req.query.playlist}/${f.originalname}`))
                     throw new common_1.BadRequestException("File not received", { cause: new Error(), description: "The file is not received by the Player" });
             });
             const response = {
@@ -56984,10 +57035,10 @@ let FilesService = exports.FilesService = class FilesService {
         }
     }
     updatePlaylistName(req) {
-        if (!fs.existsSync(`${enviornment_1.enviornment.upload_dir}/${req.query.playlist}`))
+        if (!fs.existsSync(`${environment_1.enviornment.upload_dir}/${req.query.playlist}`))
             throw new common_1.NotFoundException("Playlist not found", { cause: new Error(), description: "The playlist is not availabe" });
         try {
-            fs.renameSync(`${enviornment_1.enviornment.upload_dir}/${req.query.playlist}`, `${enviornment_1.enviornment.upload_dir}/${req.query.updatedPlaylistName}`);
+            fs.renameSync(`${environment_1.enviornment.upload_dir}/${req.query.playlist}`, `${environment_1.enviornment.upload_dir}/${req.query.updatedPlaylistName}`);
             const response = {
                 message: "Playlist Name Updated",
                 body: "Playlist name updated successfully"
@@ -56999,10 +57050,10 @@ let FilesService = exports.FilesService = class FilesService {
         }
     }
     updateFileName(req) {
-        if (!fs.existsSync(`${enviornment_1.enviornment.upload_dir}/${req.query.playlist}/${req.query.fileName}`))
+        if (!fs.existsSync(`${environment_1.enviornment.upload_dir}/${req.query.playlist}/${req.query.fileName}`))
             throw new common_1.NotFoundException("Playlist not found", { cause: new Error(), description: "The playlist is not availabe" });
         try {
-            fs.renameSync(`${enviornment_1.enviornment.upload_dir}/${req.query.playlist}/${req.query.fileName}`, `${enviornment_1.enviornment.upload_dir}/${req.query.playlist}/${req.query.updatedFileName}`);
+            fs.renameSync(`${environment_1.enviornment.upload_dir}/${req.query.playlist}/${req.query.fileName}`, `${environment_1.enviornment.upload_dir}/${req.query.playlist}/${req.query.updatedFileName}`);
             const response = {
                 message: "Music Name Updated",
                 body: "Music name updated successfully"
@@ -57015,12 +57066,12 @@ let FilesService = exports.FilesService = class FilesService {
     }
     deleteAllData() {
         try {
-            if (fs.existsSync(enviornment_1.enviornment.upload_dir)) {
-                fs.readdir(enviornment_1.enviornment.upload_dir, (err, dirs) => {
+            if (fs.existsSync(environment_1.enviornment.upload_dir)) {
+                fs.readdir(environment_1.enviornment.upload_dir, (err, dirs) => {
                     if (err)
                         throw err;
                     for (const dir of dirs) {
-                        fs.rmdirSync(`${enviornment_1.enviornment.upload_dir}/${dir}`, { recursive: true });
+                        fs.rmdirSync(`${environment_1.enviornment.upload_dir}/${dir}`, { recursive: true });
                     }
                 });
                 this._playerService.deleteCacheFile();
@@ -57152,7 +57203,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.PlayerService = void 0;
 const common_1 = __webpack_require__(29970);
 const fs = __webpack_require__(57147);
-const enviornment_1 = __webpack_require__(15548);
+const environment_1 = __webpack_require__(2347);
 const cacheFolderPath = __dirname + '../../../../';
 const cacheFileName = 'music_history.json';
 let PlayerService = exports.PlayerService = class PlayerService {
@@ -57160,7 +57211,7 @@ let PlayerService = exports.PlayerService = class PlayerService {
         return true;
     }
     getDetailsFromCacheFile() {
-        if (!fs.existsSync(`${enviornment_1.enviornment.cache_dir}/${cacheFileName}`)) {
+        if (!fs.existsSync(`${environment_1.enviornment.cache_dir}/${cacheFileName}`)) {
             const response = {
                 code: 1
             };
@@ -57168,7 +57219,7 @@ let PlayerService = exports.PlayerService = class PlayerService {
         }
         else {
             try {
-                let cacheFile = JSON.parse(fs.readFileSync(`${enviornment_1.enviornment.cache_dir}/${cacheFileName}`, { encoding: 'utf8' }));
+                let cacheFile = JSON.parse(fs.readFileSync(`${environment_1.enviornment.cache_dir}/${cacheFileName}`, { encoding: 'utf8' }));
                 return cacheFile;
             }
             catch (err) {
@@ -57178,7 +57229,7 @@ let PlayerService = exports.PlayerService = class PlayerService {
     }
     createOrUpdateCacheFile(body) {
         try {
-            fs.writeFileSync(`${enviornment_1.enviornment.cache_dir}/${cacheFileName}`, JSON.stringify(body));
+            fs.writeFileSync(`${environment_1.enviornment.cache_dir}/${cacheFileName}`, JSON.stringify(body));
         }
         catch (err) {
             throw new common_1.InternalServerErrorException("Something went wrong", err);
@@ -57190,7 +57241,7 @@ let PlayerService = exports.PlayerService = class PlayerService {
     }
     deleteCacheFile() {
         try {
-            fs.rmSync(`${enviornment_1.enviornment.cache_dir}/${cacheFileName}`, { force: true });
+            fs.rmSync(`${environment_1.enviornment.cache_dir}/${cacheFileName}`, { force: true });
         }
         catch (err) {
             throw new common_1.InternalServerErrorException("Something went wrong", err);
@@ -59124,12 +59175,12 @@ __webpack_unused_export__ = ({ value: true });
 const core_1 = __webpack_require__(460);
 const app_module_1 = __webpack_require__(78858);
 const path = __webpack_require__(71017);
-const enviornment_1 = __webpack_require__(15548);
+const environment_1 = __webpack_require__(2347);
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.enableCors();
-    app.useStaticAssets(path.join(__dirname + enviornment_1.enviornment.staticAssetsUpload));
-    app.useStaticAssets(path.join(__dirname + enviornment_1.enviornment.staticAssetsFrontend));
+    app.useStaticAssets(path.join(__dirname + environment_1.enviornment.staticAssetsUpload));
+    app.useStaticAssets(path.join(__dirname + environment_1.enviornment.staticAssetsFrontend));
     await app.listen(26091);
 }
 bootstrap();

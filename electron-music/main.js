@@ -1,6 +1,7 @@
 const { app, BrowserWindow } = require('electron')
 const path = require('path')
 const url = require('url')
+const fs = require('fs');
 
 let win
 
@@ -10,7 +11,8 @@ function createWindow() {
             nodeIntegration: true,
             contextIsolation: false,
         },
-        show: false
+        show: false,
+        icon: path.join(__dirname, 'frontend', 'angular-music', 'assets', 'favicon.ico')
     })
 
     win.maximize();
@@ -23,15 +25,17 @@ function createWindow() {
         slashes: true
     }))
 
-    win.setIcon(url.format({
-        pathname: path.join(__dirname, 'frontend', 'angular-music', 'assets', 'favicon.ico'),
-        protocol: 'file:',
-        slashes: true
-    }))
-
     win.on('closed', () => {
         win = null
     })
+
+    if (!fs.existsSync(path.join(__dirname, 'uploads', 'playlists'))) {
+        fs.mkdirSync(path.join(__dirname, 'uploads', 'playlists'), { recursive: true });
+    }
+
+    if (!fs.existsSync(path.join(__dirname, 'cache'))) {
+        fs.mkdirSync(path.join(__dirname, 'cache'));
+    }
 }
 app.on('ready', createWindow)
 
