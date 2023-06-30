@@ -1,0 +1,19 @@
+To load current trending musics:
+https://www.jiosaavn.com/api.php?__call=content.getTopSearches&ctx=web6dot0&api_version=4&_format=json&_marker=0
+
+The link of a particular song may look like this:
+https://www.jiosaavn.com/song/pasoori/MzkjQhx5RX8
+
+Generate song link api:
+"https://ac.cf.saavncdn.com/663/4aef67fd9511a82b1f49835101c145a7_160.mp4?Expires=1688022113&Signature=aC8ZQBZuY4x-AX0G7ll6L5nFbmxxjO-2ZUprsp6AWDL1kE6WF04WBTtkMZNdfv76zyI4urou~hmFxhJit--uygGpxza8JEBfVFabhTWpESAlexH6d275zMEqbVrsmWlBGOb01pGEQH8rAR4bMN-rKerbhtFP1cfVV9XEmHhU6RntgyCgiWLCG5ruEeWDnqaMiOI7bgzGl4K1S2Qo58h6Td8hTAbYpqv-BJmPmbt6gA-7fuL7ajlQB6HdP8TU8xkvNWajkeuFJZS0zUDvtsUqNlKhDzYyAFXhppyz8v6O222lEYrIm2UwekLKrF6g4k3RkjWlY7pzcGOAkS8n6xQuHw__&Key-Pair-Id=APKAJB334VX63D3WJ5ZQ"
+
+
+Res:
+https:\/\/ac.cf.saavncdn.com\/726\/63ab0277bcc8ac8959200694e7855a96_160.mp4
+
+api call to get a particular song (in mp4):
+https://aac.saavncdn.com/663/4aef67fd9511a82b1f49835101c145a7_160.mp4
+
+
+play button:
+document.querySelector("a.c-btn.c-btn--primary")

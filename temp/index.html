@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+    <p>Click</p>
+
+    <button onclick="openModel()">open</button>
+    <button onclick="closeModel()">close</button>
+    <button onclick="callAPI()">Call</button>
+    <button onclick="isApiCallPending()">check</button>
+
+    <script>
+
+        document.__defineGetter__("domain", function () { return "www.jiosaavn.com" });
+        console.log(document.domain);
+
+        const ongoingRequests = [];
+
+        // (function () {
+        //     const originalOpen = XMLHttpRequest.prototype.open;
+        //     const originalSend = XMLHttpRequest.prototype.send;
+
+        //     XMLHttpRequest.prototype.open = function (method, url) {
+        //         this._url = url;
+        //         originalOpen.apply(this, arguments);
+        //     };
+
+        //     XMLHttpRequest.prototype.send = function () {
+        //         const fullUrl = `${this._url}`;
+        //         ongoingRequests.push(fullUrl);
+        //         this.addEventListener("readystatechange", function () {
+        //             if (this.readyState === 4) {
+        //                 const index = ongoingRequests.indexOf(fullUrl);
+        //                 if (index !== -1) {
+        //                     ongoingRequests.splice(index, 1);
+        //                 }
+        //             }
+        //         });
+        //         originalSend.apply(this, arguments);
+        //     };
+
+        //     setInterval(function () {
+        //         console.table(ongoingRequests);
+        //     }, 1000);
+        // })();
+
+        function callAPI() {
+            // fetch("http://localhost:3000/").then((res) => res.text()).then((val) => { console.log(val) });
+            let xhr = new XMLHttpRequest();
+            xhr.open("GET", "http://localhost:3000/aaa");
+            xhr.send();
+            xhr.onload = function (data) {
+                console.log(data);
+            }
+        }
+
+        var myWindow;
+        // document.domain = "www.jiosaavn.com"
+        function openModel() {
+            myWindow = window.open("https://www.jiosaavn.com/song/pasoori/MzkjQhx5RX8", "", "width=500,height=500");
+            // myWindow.addEventListener("load", function () {
+            //     console.log("llllllllllllllllllllllll");
+            //     const script = newWindow.document.createElement("script");
+            //     script.textContent = `
+            //         console.log("Script executed in new window");`;
+            //     newWindow.document.head.appendChild(script);
+            // });
+            // checkReadyState(myWindow);
+            // const childWindow = myWindow;
+            console.log(myWindow.document.URL);
+            setTimeout(() => {
+                // myWindow.postMessage("hello from parent", "www.jiosaavn.com");
+                // const childDocument = myWindow.document;
+                // const element = childDocument.querySelector("body");
+                // console.log(element);
+            }, 3000);
+        }
+
+        function executeScript(newWindow) {
+            console.log("checked...");
+            const script = `
+                // Your script here
+                console.log("Script executed in new window");
+            `;
+            newWindow.document.write("script");
+        }
+
+
+        function checkReadyState(newWindow) {
+
+        }
+
+        function closeModel() {
+            if (myWindow) myWindow.close();
+        }
+
+        function isApiCallPending() {
+            const xhrs = document.querySelectorAll('[data-api-call]');
+            for (const xhr of xhrs) {
+                if (xhr.readyState !== XMLHttpRequest.DONE) {
+                    console.log(true);
+                }
+            }
+            console.log(false);
+        }
+
+
+    </script>
+
+</body>
+
+</html>
